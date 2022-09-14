@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MeshTodo.com</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" 
+        integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <style>
+        .bgdark{
+                background-color: rgb(31, 28, 28);
+                color: white;
+        }
+        .bgwhite{
+                background-color: white;
+                color: black;
+        }
+        #search {
+            background-image: url('search-icon-png-18.png');
+            background-size: 23px 23px;
+            background-position: 10px 12px;
+            background-repeat: no-repeat;
+            width: 50%;
+            font-size: 16px;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;
+            margin-bottom: 12px;
+            box-shadow: 0px 4px 2px rgb(8, 103, 226);
+            border-radius: 10px;
+        }
+        #search:focus {
+            width: 100%;
+            animation-name: example;
+            animation-duration: 0.5s;
+            animation-timing-function: linear;
+            animation-direction: reverse; 
+        }
+        @keyframes example {
+            0%   {width: 100%;}
+            25%  {width: 87.5%;}
+            50%  {width: 75%;}
+            75%  {width: 62.5%;}
+            100% {width: 50%;}
+        }
+        .ex2 {
+            width: 50%;
+            animation-name: example2;
+            animation-duration: 0.5s;
+            animation-timing-function: linear;
+            animation-direction: reverse; 
+        }
+        @keyframes example2 {
+            0%   {width: 50%;}
+            25%  {width: 62.5%;}
+            50%  {width: 75%;}
+            75%  {width: 87.5%;}
+            100% {width: 100%;}
+        }
+        .ed-not {
+            background-color: green;
+            color: white;
+            font-weight: bolder;
+            font-size: larger;
+            padding: 5px 10px;
+            border-radius: 10px 10px;
+            border: 2px solid black;
+            width: 45%;
+            position: fixed;
+            top: 50%;
+            z-index: -3;
+            display: none;
+        }
+        .ed-not2 {
+            background-color: rgb(236, 61, 8);
+            color: white;
+            font-weight: bolder;
+            font-size: larger;
+            padding: 5px 10px;
+            border-radius: 10px 10px;
+            border: 2px solid black;
+            width: 45%;
+            position: fixed;
+            top: 50%;
+            z-index: -3;
+            display: none;
+        }
+        [class*="col-"] {
+            width: 80%;
+        }
+        @media only screen and (min-width: 600px) {
+            .col-s-12 {width: 45%;}
+        }
+
+    </style>
+    </head>
+    <body class="container-fluid">
+        <div class="container text-center text-primary">
+            <br><br>
+            <h1 class="font-weight-bolder">Meshoo To-Do App.</h1>
+            <hr>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="container">
+                    <div class="btn-group btn-group-lg border">
+                        <button type="button" class="btn btn-dark border border-dark" onclick="darkMode()" title="Dark Mode">
+                            <i class='fas fa-adjust' style='font-size:24px;'></i>
+                        </button>
+                        <button type="button" class="btn btn-light border border-dark" onclick="lightMode()" title="Light Mode">
+                            <i class='far fa-lightbulb' style='font-size:24px;'></i>
+                        </button>
+                    </div>
+                </div>
+                <br>
+                <div class="container pt-3 my-3">
+                    <h3>Input You ToDo Activity and Save.</h3>
+                </div>
+                <div class="container pt-3 my-3">
+                    <form>
+                        <div class="form-group">
+                            <label for="List">Input ToDo Activity</label>
+                            <input type="text" onkeyup="check()" class="form-control" required id="List" 
+                            placeholder="Input ToDo Activity"><p></p>
+                            <button type="button" onclick="saveTodo()" class="btn btn-primary" id="Save">
+                                Save Activity
+                            </button>    
+                            <input type="hidden" class="idClass">                        
+                            <input type="hidden" class="idClass">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col">
+                <div class="container pt-3 my-3 text-center">
+                    <input type="text" placeholder="Search todo items..." id="search" onkeyup="searchTodo()"
+                    title="Type In a Todo Item" onblur="blurFx()">
+                    <p class="ed-not col-s-12" id="ed"><i class='far fa-check-circle' style="font-size:24px;color:white"></i>
+                         Your Todo was Edited Succesfully
+                    </p>
+                    <p class="ed-not2 col-s-12" id="ed2"><i class='far fa-check-circle' style="font-size:24px;color:white"></i>
+                         Your Todo was Deleted Succesfully
+                    </p>
+                </div>
+                <div class="table-responsive container pt-3 my-3">
+                    <table class="table table-striped table-bordered" id="myTable">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Check</th>
+                                <th>ToDo Activities</th>
+                                <th>Delete</th>
+                                <th>Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody" class="text-primary">
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-between">
+                        <button onclick="cleartable()" class="btn btn-danger">Clear Table</button>
+                        <div class="text-right"><button class="btn btn-info" onclick="window.print()">Print Page</button></div>
+                    </div>
+                </div>
+                <div class="modal fade" id="popUp">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Edit Your ToDo Activity</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <label for="todoEdit">Edit Todo:</label>
+                                <textarea class="form-control" rows="3" id="todoEdit" name="text" onkeyup="modBtnDisable()"></textarea>
+                            </div>
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" id="modBtn" data-dismiss="modal">
+                                    Add Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="popUp2">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Delete?</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <label for="myP">Are You Sure You Want To Delete This Todo Activity:</label>
+                                <h4 class="form-control" id="myP"></h4>
+                            </div>
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger " data-dismiss="modal">
+                                    No
+                                </button>
+                                <button type="button" class="btn btn-primary" id="delModBtn" data-dismiss="modal">
+                                    Yes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            //Light and Darkmode
+            function darkMode(){
+                var element = document.body
+                element.className = "bgdark"
+                check();
+                blurFx();
+                getSavedActivityFromLocalStorage();
+                updateTable();
+                clearForm();
+                delTakeValue(index);
+                bringValue(index);
+                modBtnDisable();
+                cleartable();
+                searchTodo();
+            }
+            function lightMode(){
+                var element = document.body
+                element.className = "bgwhite";
+                check();
+                blurFx();
+                getSavedActivityFromLocalStorage();
+                updateTable();
+                clearForm();
+                delTakeValue(index);
+                bringValue(index);
+                modBtnDisable();
+                cleartable();
+                searchTodo();
+            }
+            check();
+            updateTable();
+            //Make the "Enter" button to submit
+            var input = document.getElementById("List");
+            input.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                document.getElementById("Save").click();
+                }
+            });
+            //Animate the search tab
+            function blurFx() {
+                var w = document.getElementById('search');
+                w.className = "ex2"
+            }
+            //getSavedActivityFromLocalStorage function
+            function getSavedActivityFromLocalStorage() {
+                let activities = localStorage.getItem("activities")
+                if (!activities) {
+                    activities = []
+                } else {
+                    activities = JSON.parse(activities)
+                }
+                return activities
+            }
+            //clears the todo input after you save
+            function clearForm(){
+                document.getElementById("List").value = "";
+            }
+            //save ToDo activity
+            function saveTodo() {
+                const list = document.getElementById("List").value; 
+                const todoArray = getSavedActivityFromLocalStorage()
+                if(list !== ""){
+                    const todoObject = {
+                    text: list,
+                    checked: false,
+                    }
+                todoArray.push(todoObject)
+                localStorage.setItem("activities", JSON.stringify(todoArray))
+                    updateTable()
+                } else {
+                    alert("You have to type a todo")
+                }
+                clearForm()
+            }
+            function handleCheckboxToggle(e){
+                const textId ="todoname"+ (e.id).slice(3)
+                console.log(textId)
+                if(e.checked !== true){
+                // e.checked = false
+                document.getElementById(textId).style.textDecoration = "none"
+                }else {
+                // e.checked = true
+                document.getElementById(textId).style.textDecoration = "line-through"  
+                }
+            }
+            // update table function
+            function updateTable() {
+                document.getElementById("tbody").innerHTML = ""
+                const todoArray = getSavedActivityFromLocalStorage()
+                todoArray.forEach(function (guest, index) {
+                const tableBody = document.getElementById("tbody")
+                const row = document.createElement('tr');
+                const checkbox = todoArray[index].checked ? `<td><input type="checkbox" class="form-control" 
+                    id="box${index}" checked onchange="handleCheckboxToggle(this)"></td>` : `<td>
+                    <input type="checkbox" class="form-control" id="box${index}" onchange="handleCheckboxToggle(this)"></td>`
+                const output =checkbox + `
+                    <td><span id="todoname${index}">${todoArray[index].text}</span></td>
+                    <td><button class="btn btn-danger" data-toggle="modal" data-target="#popUp2" onclick="delTakeValue(`+index+`)"><i class='far fa-trash-alt' style='font-size:24px;'></i></button></td>
+                    <td><button class="btn btn-info" data-toggle="modal" data-target="#popUp" onclick="bringValue(`+index+`)"><i class='far fa-edit' style='font-size:24px;'></i></button></td>    
+                `
+                row.innerHTML = output.trim()
+                tableBody.appendChild(row)
+                searchTodo();
+                })
+            }
+            //Delete Popup and del function
+            function delTakeValue(index){
+                const todoArray = getSavedActivityFromLocalStorage();
+                todoArray[index];
+                todoArray[index].text;
+                const todoObject = todoArray[index].text;
+                document.getElementById('myP').innerHTML = todoObject;
+                document.getElementsByClassName('idClass')[1].id = index;
+                document.getElementById('delModBtn').addEventListener('click', function(){
+                    const todoArray = getSavedActivityFromLocalStorage();
+                    const i = document.getElementsByClassName('idClass')[1].id;
+                    todoArray.splice(i, 1)
+                    localStorage.clear();
+                    localStorage.setItem("activities", JSON.stringify(todoArray));
+                    updateTable();
+                    getSavedActivityFromLocalStorage();
+                    document.getElementById('ed2').style.zIndex = "3";
+                    document.getElementById('ed2').style.display = "block";
+                    setTimeout(() => {
+                        document.getElementById('ed2').style.display = "none";
+                        document.getElementById('ed2').style.zIndex = "-3";
+                    }, 3000);
+                })
+            }
+            // Taking Edit Value to Textarea And Edit Function
+            function bringValue(index) {
+                const todoArray = getSavedActivityFromLocalStorage();
+                todoArray[index];
+                const todoObject = todoArray[index].text;
+                document.getElementById("todoEdit").value = todoObject;
+                document.getElementsByClassName('idClass')[0].id = index;
+                document.getElementById('modBtn').addEventListener('click', function(){
+                    const todoArray = getSavedActivityFromLocalStorage();
+                    const i = document.getElementsByClassName('idClass')[0].id
+                    todoArray[i];
+                    const todoEditted = document.getElementById('todoEdit').value;
+                    const mainObj = {
+                        text: todoEditted,
+                        checked: false,
+                    };
+                    todoArray.splice(i, 1, mainObj);
+                    localStorage.clear();
+                    localStorage.setItem("activities", JSON.stringify(todoArray));
+                    updateTable();
+                    document.getElementById('ed').style.zIndex = "3";
+                    document.getElementById('ed').style.display = "block";
+                    setTimeout(() => {
+                        document.getElementById('ed').style.display = "none";
+                        document.getElementById('ed').style.zIndex = "-3";
+                    }, 3000);
+                })
+            }
+            // Disabling Modal Add-Changes Button
+            function modBtnDisable() { 
+                if (document.getElementById('todoEdit').value == "") {
+                    document.getElementById('modBtn').disabled = true;
+                } else {
+                    document.getElementById('modBtn').disabled = false;
+                }
+            }
+            //cleartable function
+            function cleartable(){
+                localStorage.clear()
+                document.getElementById("tbody").innerHTML = ""
+            }
+            // check function
+            function check(){
+                if(document.getElementById("List").value === "")
+                    {
+                        document.getElementById('Save').disabled = true;
+                    }
+                else{
+                        document.getElementById('Save').disabled = false;
+                    }
+            }
+            function searchTodo() {
+                var input, filter, table, tr, td, i, txtValue;
+                input = document.getElementById("search");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("myTable");
+                tr = table.getElementsByTagName("tr");
+                    for (i = 0; i < tr.length; i++) {
+                        td = tr[i].getElementsByTagName("td")[1];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "";
+                            } else {
+                                tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
